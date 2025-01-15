@@ -11,3 +11,6 @@ DIR_DATA = Path(__file__).parent.parent / "data"
 
 PATH_PERFUSION_PATIENTS = DIR_DATA / "perfusion_patients.txt"
 PATH_REFERENTIAL_TABLE = DIR_DATA / "referential_table.csv"
+
+LIST_ATLAS_MRI_POSSIBLE_SOURCES = ["PIPELINE", "PIPELINE_SS"]
+LIST_ATLAS_CERCARE_POSSIBLE_SOURCES = ["PADDING"]

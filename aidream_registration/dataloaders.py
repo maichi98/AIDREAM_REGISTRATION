@@ -41,7 +41,12 @@ class NativeImagingNiftiLoader:
                           / fr"{patient}_{biomarker}.nii.gz")
         assert path_biomarker.exists(), f"Cercare {biomarker} doesn't exist for {patient} !"
 
-        return ants.image_read(str(path_biomarker))
+        ants_biomarker = ants.image_read(str(path_biomarker))
+
+        if biomarker == "brainmask":
+            ants_biomarker = ants_biomarker / ants_biomarker.max()
+
+        return ants_biomarker
 
 
 class AtlasImagingNiftiLoader:
@@ -119,3 +124,29 @@ class AtlasImagingNiftiLoader:
         assert path_biomarker.exists(), f"ATLAS {biomarker} {interpolator} doesn't exist for {patient} !"
 
         return ants.image_read(str(path_biomarker))
+
+    def get_mri_transform(self, patient: str, stage: str, imaging: str):
+
+        if stage not in ["pre_RT", "Rechute"]:
+            raise ValueError(f"Stage {stage} not supported !")
+
+        if imaging not in constants.LIST_MRI_MAPS:
+            raise ValueError(f"Imaging {imaging} not supported !")
+
+        dict_transform_paths = {
+            "PIPELINE": f"AIDREAM DATA"
+                        f"/MRI DATA"
+                        f"/REGISTERED MRI BY PIPELINE"
+                        f"/{stage}"
+                        f"/OUTPUT_DIR"
+                        f"/{patient}"
+                        f"/affine_transform"
+                        f"/image_n4_fwdtransforms_{imaging.lower()}.mat",
+        }
+        dict_transform_paths["PIPELINE_SS"] = dict_transform_paths["PIPELINE"]
+
+        path_transform = (self.dir_hard_drive
+                          / dict_transform_paths[self.source_mri])
+        assert path_transform.exists(), f"ATLAS {stage} {imaging} transform doesn't exist for {patient} !"
+
+        return str(path_transform)

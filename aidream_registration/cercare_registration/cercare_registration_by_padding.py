@@ -1,2 +1,5 @@
 class CercarePaddingRegisterer:
-    pass
+
+    def __init__(self, patient: str):
+
+        self.patient = patient

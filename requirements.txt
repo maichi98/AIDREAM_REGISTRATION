@@ -2,3 +2,4 @@ antspyx
 numpy
 pandas
 pydicom
+torch

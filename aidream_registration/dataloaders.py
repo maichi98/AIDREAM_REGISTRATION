@@ -68,7 +68,7 @@ class AtlasImagingNiftiLoader:
             raise ValueError(f"Source Cercare {source_cercare} not supported !"
                              f" supported sources are {constants.LIST_ATLAS_CERCARE_POSSIBLE_SOURCES}")
 
-    def load_mri(self, patient: str, stage: str, imaging: str):
+    def get_path_mri(self, patient: str, stage: str, imaging: str):
 
         if stage not in ["pre_RT", "Rechute"]:
             raise ValueError(f"Stage {stage} not supported !")
@@ -99,6 +99,11 @@ class AtlasImagingNiftiLoader:
                         / dict_imaging_paths[self.source_mri])
         assert path_imaging.exists(), f"ATLAS {stage} {imaging} doesn't exist for {patient} !"
 
+        return path_imaging
+
+    def load_mri(self, patient: str, stage: str, imaging: str):
+
+        path_imaging = self.get_path_mri(patient, stage, imaging)
         return ants.image_read(str(path_imaging))
 
     def load_cercare(self, patient: str, biomarker: str, interpolator: str):

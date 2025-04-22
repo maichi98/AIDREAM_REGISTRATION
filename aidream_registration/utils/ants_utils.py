@@ -38,3 +38,21 @@ def save_as_empty_label(path_empty_label: Path | str):
 
     shutil.copy2(src=str(constants.PATH_EMPTY_LABEL),
                  dst=str(path_empty_label))
+
+
+def get_atlas(name: str):
+
+    name = name.upper()
+
+    if name not in ["ACARRE", "HAMMERSMITH"]:
+        raise ValueError(f"Atlas {name} not supported !,"
+                         f" supported atlases are : ACARRE, HAMMERSMITH")
+
+    dict_config = {
+        "ACARRE": constants.DIR_DATA / "spgr_unstrip_lps.nii.gz",
+        "HAMMERSMITH": constants.DIR_DATA / "hammersmith" / fr"T1w_ICBM_skullstripped.nii.gz"
+    }
+    assert dict_config[name].exists(), f"Missing {name} atlas !"
+
+    return ants.image_read(str(dict_config[name]))
+

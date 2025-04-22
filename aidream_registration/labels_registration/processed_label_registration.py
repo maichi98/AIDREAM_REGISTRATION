@@ -9,12 +9,14 @@ import ants
 class ProcessedLabelRegistration:
 
     def __init__(self,
-                 dir_hard_drive: Path = constants.DIR_DEFAULT_HARD_DRIVE):
+                 dir_hard_drive: Path = constants.DIR_DEFAULT_HARD_DRIVE,
+                 overwrite: bool = False):
 
         self.dir_hard_drive = dir_hard_drive
         assert self.dir_hard_drive.exists(), f"{self.dir_hard_drive} doesn't exist !"
 
         self.atlas_loader = AtlasImagingNiftiLoader(dir_hard_drive=self.dir_hard_drive, source_mri="PIPELINE_SS")
+        self.overwrite = overwrite
 
     def apply_affine_transformation_to_labels(self, patient: str, stage: str, reference: str, list_labels: list[str]):
 
@@ -38,7 +40,7 @@ class ProcessedLabelRegistration:
         prefix_affine_transform.parent.mkdir(exist_ok=True, parents=True)
 
         path_affine_transform = prefix_affine_transform.parent / fr"{patient}_Affine_0GenericAffine.mat"
-        if path_affine_transform.exists():
+        if path_affine_transform.exists() and not self.overwrite:
             print(fr"the source imaging is already Affine registered on the ATLAS pre_RT T1 !")
 
         else:
@@ -97,7 +99,7 @@ class ProcessedLabelRegistration:
                                  / fr"{patient}_{stage}_{label}_Affine.nii.gz")
             path_warped_label.parent.mkdir(parents=True, exist_ok=True)
 
-            if path_warped_label.exists():
+            if path_warped_label.exists() and not self.overwrite:
                 print(fr"Affine {stage} {label} already exists for {patient} !")
 
             else:
@@ -150,7 +152,7 @@ class ProcessedLabelRegistration:
         prefix_syn_transform.parent.mkdir(exist_ok=True, parents=True)
 
         path_syn_transform = prefix_syn_transform.parent / fr"{patient}_SyN_0GenericAffine.mat"
-        if path_syn_transform.exists():
+        if path_syn_transform.exists() and not self.overwrite:
             print(fr"the source imaging is already SyN registered on the ATLAS pre_RT T1CE !")
 
         else:
@@ -210,7 +212,7 @@ class ProcessedLabelRegistration:
                                  / fr"{patient}_{stage}_{label}_SyN.nii.gz")
             path_warped_label.parent.mkdir(parents=True, exist_ok=True)
 
-            if path_warped_label.exists():
+            if path_warped_label.exists() and not self.overwrite:
                 print(fr"SyN {stage} {label} already exists for {patient} !")
 
             else:

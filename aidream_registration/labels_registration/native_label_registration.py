@@ -9,11 +9,13 @@ import ants
 class NativeLabelRegistration:
 
     def __init__(self,
-                 dir_hard_drive: Path = constants.DIR_DEFAULT_HARD_DRIVE):
+                 dir_hard_drive: Path = constants.DIR_DEFAULT_HARD_DRIVE,
+                 overwrite: bool = False):
 
         self.dir_hard_drive = dir_hard_drive
         assert self.dir_hard_drive.exists(), f"{self.dir_hard_drive} doesn't exist !"
 
+        self.overwrite = overwrite
         self.atlas_loader = AtlasImagingNiftiLoader(dir_hard_drive=self.dir_hard_drive, source_mri="PIPELINE_SS")
 
     def apply_affine_transformation_to_labels(self, patient: str, stage: str, reference: str, list_labels: list[str]):
@@ -39,7 +41,7 @@ class NativeLabelRegistration:
                                  / fr"{patient}_{stage}_{label}_Affine.nii.gz")
             path_warped_label.parent.mkdir(parents=True, exist_ok=True)
 
-            if path_warped_label.exists():
+            if path_warped_label.exists() and not self.overwrite:
                 print(fr"Affine {label} already exists for {patient} !")
 
             else:
